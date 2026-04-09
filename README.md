@@ -6,11 +6,21 @@
 
 ## 安装
 
+### 前置条件
+
+- [ ] Claude Code 已安装（[安装指南](https://docs.anthropic.com/claude/docs/claude-code)）
+- [ ] Node.js 18+ 已安装（验证：`node --version`）
+
+### 安装步骤
+
 ```bash
 npx skills add joeseesun/qiaomu-design-advisor
 ```
 
-**前置要求：** Claude Code 已安装
+验证安装：
+```bash
+ls ~/.claude/skills/qiaomu-design-advisor
+```
 
 ## 核心能力
 
@@ -82,8 +92,21 @@ npx getdesign@latest add {site}
 
 ## 致谢
 
-- 设计系统数据来自 [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)
-- 遵循 [Google Stitch DESIGN.md 格式](https://stitch.withgoogle.com/docs/design-md/format/)
+本项目的设计系统 Markdown 文件来自 [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 项目。
+
+感谢 VoltAgent 团队收集整理了 58 个顶级网站的完整设计系统，并遵循 [Google Stitch DESIGN.md 格式](https://stitch.withgoogle.com/docs/design-md/format/) 进行标准化。这些高质量的设计参考资料是本 Skill 的核心基础。
+
+如果你也需要这些设计系统文件，可以直接访问：
+- **原始仓库**: https://github.com/VoltAgent/awesome-design-md
+- **格式规范**: https://stitch.withgoogle.com/docs/design-md/format/
+
+## 常见问题
+
+| 问题 | 解决方法 |
+|------|----------|
+| 提示"找不到设计系统文件" | 检查 `~/.claude/skills/qiaomu-design-advisor/references/design-systems/` 目录是否存在 |
+| AI 没有给出具体的设计方案 | 明确告诉 AI 你处于哪个阶段（诊断/方案/执行），避免跳过工作流 |
+| 想参考某个网站但不在列表中 | 可以手动添加：`cd ~/.claude/skills/qiaomu-design-advisor/references/design-systems && npx getdesign@latest add <网站域名>` |
 
 ## License
 
