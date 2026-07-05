@@ -12,7 +12,21 @@
 
 **完整横评：** [前端设计 Skill 横评实验室](https://designskill.qiaomu.ai/) 展示 8 个主流变体 × 10 个任务的 80 个真实生成页面，qiaomu-design 与 impeccable 均已补齐全部任务。
 
-## 案例截图
+## 模型建议
+
+强烈建议用 **GLM5.2 / GLM 5.2** 或 **Claude** 模型执行本 skill。近期实测里，Codex 中的 GPT 模型做设计生成效果很不理想：容易保守、空洞、模板化，难以稳定产出有气质的完整页面。追求高质量视觉时，优先切到 GLM5.2 或 Claude。
+
+## 案例
+
+### 视频案例 · 冥想网站
+
+这个冥想网站是 qiaomu-design 生成的完整网页案例，展示了中文排版、克制动效、留白节奏和东方禅意视觉系统。
+
+<a href="docs/assets/cases/qiaomu-design-meditation-site.mp4"><img src="docs/assets/cases/qiaomu-design-meditation-site.jpg" alt="qiaomu-design 生成的冥想网站案例封面" width="860"></a>
+
+[观看 40 秒 MP4 演示](docs/assets/cases/qiaomu-design-meditation-site.mp4)
+
+### 横评截图
 
 以下 10 张截图来自 qiaomu-design 在横评实验里的真实生成页面。点击截图可打开线上可交互原始文件。
 
@@ -93,7 +107,7 @@ cp -r qiaomu-design ~/.claude/skills/qiaomu-design
 你：帮我重新设计博客首页
  ↓ Phase 1  诊断：设计读取 + 三拨盘 + 2-3 个关键问题
  ↓ Phase 2  风格试衣间：生成 design-previews/YYYY-MM-DD-任务名/index.html
-            4 个方向实际看着选，点选后回传到 Codex
+            4 个方向实际看着选，点选后回传到当前工作流
  ↓ Phase 3  执行：先立 DESIGN.md 锚 → 写码 → preflight 门禁 → 交付
 ```
 
@@ -159,7 +173,8 @@ Then just ask Claude Code: `redesign my landing page`.
 
 ## What you get
 
-- **Style fitting room**: 4 mutually-divergent direction mockups (real fonts/colors/layout) in `design-previews/YYYY-MM-DD-task/index.html`. Pick by click or keys; the local preview server reports the selection back to Codex.
+- **Recommended models**: use GLM 5.2 or Claude for this skill. In recent runs, GPT models inside Codex produced poor design results: too conservative, sparse, and template-like for high-quality visual work.
+- **Style fitting room**: 4 mutually-divergent direction mockups (real fonts/colors/layout) in `design-previews/YYYY-MM-DD-task/index.html`. Pick by click or keys; the local preview server reports the selection back to the current workflow.
 - **Design read + three dials**: VARIANCE / MOTION / DENSITY auto-tuned per task type — restrained on functional UI, bold on open creative briefs.
 - **Anti-slop bans**: no AI-purple gradients, no Inter, no italics, no centered-hero clichés, no "revolutionary/seamless" copy.
 - **Chinese typography rules**: system font stack first, subset decorative CJK webfonts (5-20 MB otherwise), CJK spacing/punctuation/line-height discipline.
@@ -171,7 +186,7 @@ Then just ask Claude Code: `redesign my landing page`.
 
 ## Verified
 
-Every core rule traces back to controlled design-skill comparisons. The first run covered 6 variants × 7 tasks × 42 generated pages; the public follow-up expands to [8 variants × 10 tasks × 80 generated pages](https://designskill.qiaomu.ai/). The qiaomu-design screenshots above link to the live interactive case pages. Provenance is documented per-module in SKILL.md.
+Every core rule traces back to controlled design-skill comparisons. The first run covered 6 variants × 7 tasks × 42 generated pages; the public follow-up expands to [8 variants × 10 tasks × 80 generated pages](https://designskill.qiaomu.ai/). The qiaomu-design screenshots above link to the live interactive case pages. The meditation website video case is available at [`docs/assets/cases/qiaomu-design-meditation-site.mp4`](docs/assets/cases/qiaomu-design-meditation-site.mp4). Provenance is documented per-module in SKILL.md.
 
 ## Limits
 
