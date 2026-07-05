@@ -44,14 +44,15 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
 
 预览页的 demo 可以有不同视觉风格，但**选择外壳必须稳定一致**，避免用户每次重新理解：
 
-- 顶部固定中性工具条：任务名 / "选择一个设计方向" / 回传状态 / 快捷键 1-4
-- 顶部说明必须显眼写明：这是**设计方向样机**，用于选择视觉与交互气质，**不是最终 App /
-  最终页面**；点选方向后才进入正式实现。不能让用户误以为 4 个卡片就是交付成品
+- 顶部固定中性工具条：任务名 / 回传状态 / 快捷键 1-4。按钮已有明确文案时，顶部不再重复
+  "点按钮选择"之类小字说明
+- 用一句低干扰文案说明：这是**设计方向样机**，用于选择视觉与交互气质，**不是最终 App /
+  最终页面**；点选方向后才进入正式实现。不要把免责声明、教程或系统说明堆在首屏
 - 若展示设计拨盘，必须使用中文标签和解释：`视觉冒险度`、`动效强度`、`信息密度`；
   可以在括号里保留 `VARIANCE/MOTION/DENSITY`，但不能只显示英文变量名
 - 拨盘说明必须提示可调：用户可以说"更稳一点/更大胆/动效少一点/信息更密"或直接给数值
 - 每个方向卡片底部有同样样式的明显按钮：`选择 A · 方向名`
-- 选中后卡片有统一高亮状态，底部 toast 显示"已回传到 Codex"
+- 选中后卡片有统一高亮状态，底部 toast 显示"已回传"
 - 本地服务会自动注入这层外壳；生成的 HTML 也应主动包含等价结构，不能只靠点卡片隐式选择。
   如果 HTML 已经自带选择按钮，按钮必须带 `.qmdp-pick-button` 或等价识别标记，且运行服务后要确认
   实际 DOM 中每个方向仍只有一颗选择按钮；按钮嵌在 `.meta` 等内部容器时也必须能被服务识别
@@ -72,14 +73,15 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
 
 ### 页面结构
 
-1. **顶部说明条**：任务名 + "选择一个设计方向"提示 + "这是方向样机，不是最终 App /
-   最终页面" + 快捷键提示（1-4）+ 回传状态
+1. **顶部状态条**：任务名 + "方向样机，不是最终 App / 最终页面" + 快捷键提示（1-4）+
+   回传状态；不重复按钮已有的选择说明
 2. **设计样机区 × 4**（固定 A/B/C/D，每个带互斥约束，其中一个标注「推荐」徽标），每个样机块包含：
    - **真实迷你 mockup**（核心）：用该方向的真字体、真配色、真布局做一个
      Hero 级别的缩尺片段（约 480×300 逻辑尺寸，`transform: scale` 适配卡宽）。
      必须是真的排版，**不是色板色块 + 字体名列表**——用户要看的是"做出来长什么样"
    - mockup 必须嵌在同一个 `index.html` 的独立 stage / iframe-like 容器中，
      4 个方向同屏可比较；不允许散落成 4 个难找的文件
+   - mockup 舞台必须填满留给它的空间；比例不匹配时居中展示，不允许出现大片无意义空白
    - 方向卡片内也应以低干扰方式标注"方向样机"，确保截图单独传播时不会被误解为最终成品
    - 窄屏下不能让 mockup 内部控件和文字互相挤压；复杂桌面/控台方向使用内部缩放舞台、
      移动端专用构图或明确可控裁切，截图检查必须覆盖移动端
@@ -90,7 +92,7 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
    内容包括一句话气质、字体策略、色彩策略、记忆点、适用场景、推荐理由和可混搭提示。
    说明区可以密一点，但不能挤压或打断样机比较
 4. **选中反馈**：点击后卡片高亮 + 底部浮条显示
-   "已选择方向 X——选择已回传到 Codex"；同时调用 `sendSelection(...)` 向
+   "已选择方向 X，已回传"；同时调用 `sendSelection(...)` 向
    `POST /api/select` 回传。如果运行在 `file://` 静态模式，则降级为剪贴板复制
    `选 X：〈方向名〉` 并提示用户回到对话发送
 5. **备选交互**：支持键盘 1/2/3/4 选择；说明区注明"也可以只选中意某个细节，
@@ -116,23 +118,24 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
 
 1. `GET /` 服务预览目录内的 `index.html`
 2. `POST /api/select` 接收 `{id,label,name,notes}`，写入同目录 `selection.json`
-3. 服务终端打印 `QIAOMU_DESIGN_SELECTION::{...}`，供 Codex 读取或轮询
-4. `GET /api/selection` 返回最新选择，便于 Codex 恢复状态
+3. 服务终端打印 `QIAOMU_DESIGN_SELECTION::{...}`，供调用方读取或监听
+4. `GET /api/selection` 返回最新选择，便于调用方恢复状态
 5. 页面选择按钮、卡片点击、键盘 1-4 都调用 `sendSelection(...)`
-6. Codex 启动预览后必须保持轮询，不得发送 final 结束回合；推荐同时运行：
+6. 执行代理启动预览后必须保持监听，不得发送 final 结束回合；推荐同时运行：
    `node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-watch-selection.mjs --selection design-previews/YYYY-MM-DD-任务名/selection.json`
+   watcher 默认使用文件事件，250ms 短轮询仅作兜底；不要再用 1s 轮询作为默认路径
 
 静态 `file://` 只是降级路径：页面高亮 + 剪贴板复制"选 X"文本，并明确提示
 "当前不会自动回传，请在对话里回复选择"。
 
-Codex 进入 Phase 3 前必须满足其一：
+执行代理进入 Phase 3 前必须满足其一：
 
 - 已观察到预览目录内的 `selection.json`
 - 已在服务日志看到 `QIAOMU_DESIGN_SELECTION::`
 - 用户在对话中明确回复选择或明确授权默认推荐方向
 
 禁止在没有观察到回传证据时，把页面上的推荐态当作用户选择。
-禁止只留下一个预览 URL 就结束当前回合；那样选择会写入文件，但 Codex 不会自动醒来继续执行。
+禁止只留下一个预览 URL 就结束当前回合；那样选择会写入文件，但当前工作流不会自动继续执行。
 
 ## 页面骨架模板
 
@@ -150,8 +153,8 @@ Codex 进入 Phase 3 前必须满足其一：
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;padding:32px}
   .card{background:#fff;border:2px solid #e2e2e0;border-radius:12px;overflow:hidden;cursor:pointer}
   .card.selected{border-color:#1a1a1a}
-  .mock{height:300px;overflow:hidden;position:relative}
-  .mock>.stage{width:960px;height:600px;transform:scale(.5);transform-origin:0 0}
+  .mock{height:300px;overflow:hidden;position:relative;display:grid;place-items:center}
+  .mock>.stage{width:960px;height:600px;transform:scale(.5);transform-origin:center center}
   /* .stage 内是各方向的真实排版，各自独立的 CSS 作用域（用方向前缀类名） */
   .meta{padding:16px 20px}
   .pickbar{position:fixed;bottom:0;left:0;right:0;padding:14px;background:#1a1a1a;color:#fff;
@@ -160,7 +163,7 @@ Codex 进入 Phase 3 前必须满足其一：
 </style>
 </head>
 <body>
-  <div class="bar"><strong>{任务名} · 选择一个设计方向</strong>
+  <div class="bar"><strong>{任务名} · 方向样机</strong>
     <span>键盘 1-4 快速选择 · <b id="cd">60</b>s 后自动采用推荐方向</span></div>
   <div class="grid"><!-- 4 张方向卡片，推荐卡片加 data-rec 与「推荐」徽标 --></div>
   <div class="pickbar" id="pickbar"></div>
@@ -189,9 +192,9 @@ Codex 进入 Phase 3 前必须满足其一：
     let result = {ok:false, fallback: location.protocol === 'file:'};
     if (!auto) result = await sendSelection({id, label: msg, name, auto:false});
     bar.textContent = result.ok
-      ? '已选择 ' + msg + ' — 已回传到 Codex'
+      ? '已选择 ' + msg + ' — 已回传'
       : (auto
-        ? '已超时，高亮推荐方向 ' + msg + ' — Codex 仍需确认默认授权'
+        ? '已超时，高亮推荐方向 ' + msg + ' — 仍需确认默认授权'
         : '已选择 ' + msg + ' — 当前为静态降级，请回到对话发送这句话');
     bar.classList.add('show');
     if (!result.ok && navigator.clipboard) navigator.clipboard.writeText(msg).catch(()=>{});
@@ -227,7 +230,7 @@ Codex 进入 Phase 3 前必须满足其一：
 生成后对用户说（示例）：
 "四个方向的可视化预览已生成并打开：`http://127.0.0.1:{port}/`
 （文件夹：`design-previews/YYYY-MM-DD-任务名/`，入口：`index.html`）。
-点选任一方向（或按 1-4）后会回传到 Codex，
+点选任一方向（或按 1-4）后会回传，
 我会看到选择再继续；也可以混搭——比如「要 B 的字体 + C 的配色」。
 我的推荐是 X：〈一句理由〉。如果你直接说「你定」，我就按 X 继续。"
 
@@ -241,4 +244,4 @@ Codex 进入 Phase 3 前必须满足其一：
 
 "四个方向的可视化预览已生成：`design-previews/YYYY-MM-DD-任务名/index.html`，
 但本地回传服务未启动（原因：...）。请打开文件后把页面复制的「选 X」发回来；
-当前点选不会自动回传到 Codex。"
+当前点选不会自动回传。"

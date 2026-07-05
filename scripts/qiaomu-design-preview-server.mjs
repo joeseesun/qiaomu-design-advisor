@@ -61,7 +61,6 @@ const bridgeScript = `
     .qmdp-frame-left, .qmdp-frame-right { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
     .qmdp-frame-title { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
     .qmdp-dot { width: 9px; height: 9px; border-radius: 999px; background: #168a5f; box-shadow: 0 0 0 4px rgb(22 138 95 / 12%); }
-    .qmdp-frame small { color: #69707d; white-space: nowrap; }
     .qmdp-key { border: 1px solid #d8dbe1; border-radius: 7px; background: #fff; padding: 5px 8px; color: #4e5665; font-weight: 650; }
     .qmdp-pick-button {
       position: relative;
@@ -120,7 +119,7 @@ const bridgeScript = `
     frame.innerHTML = \`
       <div class="qmdp-frame-left">
         <span class="qmdp-dot" aria-hidden="true"></span>
-        <span class="qmdp-frame-title"><strong>设计方向预览</strong><small>点按钮或按 1-4，选择会回传到 Codex</small></span>
+        <span class="qmdp-frame-title"><strong>设计方向预览</strong></span>
       </div>
       <div class="qmdp-frame-right" aria-label="选择快捷键">
         <span class="qmdp-key">1 A</span><span class="qmdp-key">2 B</span><span class="qmdp-key">3 C</span><span class="qmdp-key">4 D</span>
@@ -152,7 +151,7 @@ const bridgeScript = `
       });
       const data = await res.json();
       window.dispatchEvent(new CustomEvent('qiaomu-design-selection-saved', {detail: data}));
-      showToast(data.ok ? '已选择 ' + label + '，并回传到 Codex。' : '选择已触发，但回传状态异常。');
+      showToast(data.ok ? '已选择 ' + label + '，已回传。' : '选择已触发，但回传状态异常。');
       return data;
     } catch (error) {
       const text = label ? '选 ' + label : JSON.stringify(record);
